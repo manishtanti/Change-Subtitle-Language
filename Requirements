@@ -1,0 +1,4 @@
+this two packages are required to run this and internet connection to translate file
+
+pip install google_trans_new
+pip install googletrans
