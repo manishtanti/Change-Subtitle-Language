@@ -24,66 +24,73 @@ def convert_file():
     if(len(srt_file)<5):
         info.config(text="File not Selected",background='red',foreground="white")
         return
-    try:
-        srt_file = srt_file[:len(srt_file)-1]
-        english_file = open(srt_file)
-        english_txt = english_file.readlines()
-        english_file.close()
-        other_info=""
-        hindi_txt=""
-        to_convert = ""
-        to_lang = LanguageVsCodeDict[language_box.get().lower()]
-        i=0
-        while i<len(english_txt):
-            other_info += english_txt[i]
-            i+=1
-            other_info += english_txt[i]
-            i += 1
-            while(english_txt[i]!='\n'):
-                to_convert += english_txt[i]
-                i+=1
+    # try:
+    srt_file = srt_file[:len(srt_file)-1]
+    english_file = open(srt_file)
+    english_txt = english_file.readlines()
+    last_index = len(english_txt)-1
+
+    while(english_txt[last_index]=="\n"):
+        last_index-=1
+        english_txt.pop()
+    english_txt.append("\n")
+
+    english_file.close()
+    other_info=""
+    hindi_txt=""
+    to_convert = ""
+    to_lang = LanguageVsCodeDict[language_box.get().lower()]
+    i=0
+    while i<len(english_txt)-1:
+        other_info += english_txt[i]
+        i+=1
+        other_info += english_txt[i]
+        i += 1
+        while(english_txt[i]!='\n'):
             to_convert += english_txt[i]
-            i += 1
-            if(len(to_convert)>4800):
-                hindi_txt += translator.translate(to_convert,lang_tgt=to_lang)
-                hindi_txt+="\n"
-                hindi_txt+="\n"
-                to_convert=""
-
-        if(len(to_convert)>0):
+            i+=1
+        to_convert += english_txt[i]
+        i += 1
+        if(len(to_convert)>4800):
             hindi_txt += translator.translate(to_convert,lang_tgt=to_lang)
-            hindi_txt += "\n"
-            hindi_txt += "\n"
+            hindi_txt+="\n"
+            hindi_txt+="\n"
+            to_convert=""
 
-        temp = ""
-        hindi_txt = hindi_txt.split('\n')
-        other_info = other_info.split('\n')
-        i=0
-        j=0
-        while i<len(hindi_txt) and j<len(other_info)-1:
-            temp += other_info[j] +"\n"
-            j += 1
-            temp += other_info[j] + "\n"
-            j += 1
-            while(i<len(hindi_txt) and hindi_txt[i]!=''):
-                temp += hindi_txt[i]+"\n"
-                i += 1
+    if(len(to_convert)>0):
+        hindi_txt += translator.translate(to_convert,lang_tgt=to_lang)
+        hindi_txt += "\n"
+        hindi_txt += "\n"
+
+    temp = ""
+    hindi_txt = hindi_txt.split('\n')
+    other_info = other_info.split('\n')
+    i=0
+    j=0
+    while i<len(hindi_txt) and j<len(other_info)-2:
+        temp += other_info[j] +"\n"
+        j += 1
+        temp += other_info[j] + "\n"
+        j += 1
+        while(i<len(hindi_txt) and hindi_txt[i]!=''):
+            temp += hindi_txt[i]+"\n"
             i += 1
-            temp += "\n"
+        i += 1
+        temp += "\n"
 
-        output_path = srt_file.split("/")
-        hindi_srt = ""
-        for i in range(len(output_path)-1):
-            hindi_srt += output_path[i]
-            hindi_srt+="/"
-        hindi_srt += output_path[-1][:-4]
-        hindi_srt += "_"+language_box.get()+".srt"
-        hindi_file=open(hindi_srt,'w',encoding='utf8')
-        hindi_file.write(temp)
-        hindi_file.close()
-        info.config(text="Subtitle Converted to "+ language_box.get(),background='green',foreground="black")
-    except Exception as e:
-        info.config(text= str(e),background='red',foreground="black",font=("Courier",10,"bold"))
+    output_path = srt_file.split("/")
+    hindi_srt = ""
+    for i in range(len(output_path)-1):
+        hindi_srt += output_path[i]
+        hindi_srt+="/"
+    hindi_srt += output_path[-1][:-4]
+    hindi_srt += "_"+language_box.get()+".srt"
+    hindi_file=open(hindi_srt,'w',encoding='utf8')
+    hindi_file.write(temp)
+    hindi_file.close()
+    info.config(text="Subtitle Converted to "+ language_box.get(),background='green',foreground="black")
+    # except Exception as e:
+    #     info.config(text= str(e),background='red',foreground="black",font=("Courier",10,"bold"))
     
 
 
